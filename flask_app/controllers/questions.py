@@ -57,12 +57,13 @@ def edit_question():
 
 @app.route('/delete_question', methods=['POST'])
 def delete_question():
-    question = Question.select(request.form['id'])
+    id = request.form['id']
+    question = Question.select(data={'id': id})
     if not 'id' in session:
         return redirect('/')
     elif session['id'] != question.user_id:
         session.pop('id')
         flash('STOP TRYING TO DELETE A QUESTION THAT ISN\'T YOURS')
     else:
-        Question.delete_question(data={'id':request.form['id']})
+        Question.delete(data={'id':id})
         return redirect('/')

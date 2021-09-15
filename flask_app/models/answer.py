@@ -10,18 +10,15 @@ class Answer:
         self.question_id = data['question_id']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
-        self.username = data['username']
         self.votes = data['votes']
 
     @classmethod
     def select(cls, data=None):
         if data:
-            query = "SELECT * FROM answers left join votes on answers.id = votes.user_id join users on users.id = answers.user_id WHERE answers.id = %(id)s"
+            query = "SELECT *, COUNT(answers.id) as votes FROM answers left join votes on answers.id = votes.answer_id where answers.id = %(id)s group by answers.id"
             results = connectToMySQL('answers').query_db(query, data)
+            print ("*********************",results)
             answer = cls(results[0])
-            answer.votes = 0
-            for vote in results:
-                answer.votes += 1
             return answer
         else:
             query = "SELECT * FROM answers join users on users.id = answers.user_id"

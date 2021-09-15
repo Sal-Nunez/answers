@@ -12,13 +12,16 @@ def new_answer():
 
 @app.route('/delete_answer', methods=['POST'])
 def delete_answer():
-    question = Question.select(data={'question_id':request.form['question_id']})
-    if (session['id']) == (question.user_id):
-        print ("**************************",session['id'],"***", request.form['user_id'])
+    question_id = request.form['question_id']
+    question = Question.select(data={'id': question_id})
+    answer_id = request.form['answer_id']
+    answer = Answer.select(data={'id': answer_id})
+    if (session['id']) != (answer.user_id):
+        print ("**************************",session['id'],"***", answer.user_id)
         flash("DO NOT TRY TO DELETE ANSWER THAT ISN'T YOURS")
         return redirect(f'/questions/{question.id}')
     else:
-        Answer.delete_answer(request.form)
+        Answer.delete_answer(data = {'id':answer_id})
         return redirect(f'/questions/{question.id}')
 
 @app.route('/best_answer', methods=['POST'])

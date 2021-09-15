@@ -24,6 +24,8 @@
         <h6>{{ question.description }}</h6>
     </div>
     {% if user.id != question.user_id %}
+    {% if question.best_answer_id > 0 %}
+    {% else %}
     <form action="/answer_question" method="post">
         <div class="mb-3">
             <label for="exampleInputanswer1" class="form-label">Answer Here: </label>
@@ -33,6 +35,7 @@
             <button class="btn btn-success mt-3" >Answer!</button>
         </div>
     </form>
+    {% endif %}
     {% endif %}
     {% for message in get_flashed_messages() %}
     <p class="alert alert-danger col-3">{{message}}</p> 
@@ -59,8 +62,11 @@
         </div>
         <div class="col">
             {% if user.id == question.user_id %} 
-            <form action="/best_answer" method="post"><input type="hidden" value="{{ answer.id }}" name="answer_id"><input type="hidden" value="{{ question.id }}" name="id"><input type="hidden" name="user_id" value="{{ user.id }}"><input type="hidden" name="question_id" value="{{ question.id }}"><button class="btn btn-success mt-1 mb-1">Choose as Best Answer</button></form> {% endif %}
-            {% if user.id == answer.user_id %} <form action="/delete_answer" method="post"><input type="hidden" name="id" value="{{answer.id}}"><input type="hidden" name="user_id" value="{{ answer.user_id }}"><input type="hidden" name="question_id" value="{{ answer.question_id }}"><button class="btn btn-danger mb-1">Delete Answer</button></form>{% endif %}
+            <form action="/best_answer" method="post"><input type="hidden" value="{{ answer.id }}" name="answer_id"><input type="hidden" value="{{ question.id }}" name="id"><input type="hidden" name="user_id" value="{{ user.id }}"><input type="hidden" name="question_id" value="{{ question.id }}"><button class="btn btn-success mt-1 mb-1">Choose as Best Answer</button></form>
+            {% endif %}
+            {% if user.id == answer.user_id %}
+            <form action="/delete_answer" method="post"><input type="hidden" name="answer_id" value="{{answer.id}}"><input type="hidden" name="user_id" value="{{ answer.user_id }}"><input type="hidden" name="question_id" value="{{ answer.question_id }}"><button class="btn btn-danger mb-1">Delete Answer</button></form>
+            {% endif %}
             <form action="/vote" method="post"><input type="hidden" value="{{ answer.id }}" name="answer_id"><input type="hidden" value="{{ question.id }}" name="id"><input type="hidden" name="user_id" value="{{ user.id }}"><input type="hidden" name="question_id" value="{{ question.id }}"><button class="btn btn-primary">Vote</button></form>
             <p>{{ answer.votes }} Votes</p>
         </div>
