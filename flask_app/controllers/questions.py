@@ -7,27 +7,31 @@ from flask_app.models.vote import Vote
 
 @app.route("/new_question")
 def new_question():
+    uuid = session['id']
+    id = {'id': uuid}
     if not 'id' in session:
         return redirect('/')
-    elif session['id'] > 0:
+    elif uuid > 0:
         data = {
-            'user': User.select(data={'id': session['id']})
+            'user': User.select(id)
         }
         return render_template('new_question.html', **data)
 
 @app.route("/create_question", methods=['POST'])
 def create_question():
+    id = session['id']
     if not 'id' in session:
         return redirect('/')
-    elif session['id'] > 0:
+    elif id > 0:
         Question.new_question(request.form)
         return redirect('/questions')
 
 @app.route('/questions/<int:id>')
 def display_question(id):
+    user_id = {'id': session['id']}
     data = {
-        'user': User.select(data={'id': session['id']}),
-        'question': Question.select(data={'id': id}),
+        'user': User.select(user_id),
+        'question': Question.select({'id': id}),
         'answers': Answer.answers_with_votes()
     }
     return render_template('question.html', **data)

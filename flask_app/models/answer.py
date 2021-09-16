@@ -30,7 +30,7 @@ class Answer:
 
     @classmethod
     def answered_questions(cls):
-        query = "SELECT *, SUM(CASE WHEN votes.answer_id = answers.id then 1 else 0 end) as votes FROM answers join questions on answers.question_id = questions.id join users on questions.user_id = users.id join votes on votes.answer_id = answers.id group by questions.id"
+        query = "SELECT *, SUM(CASE WHEN votes.answer_id = answers.id then 1 else 0 end) as votes FROM answers join questions on answers.question_id = questions.id join users on questions.user_id = users.id left join votes on votes.answer_id = answers.id group by questions.id"
         results = connectToMySQL('answers').query_db(query)
         if results:
             answer = cls(results[0])

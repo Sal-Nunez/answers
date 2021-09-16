@@ -31,16 +31,22 @@ def register():
             'email': request.form['email'],
             'password': request.form['password']
         }
-        session['id'] = User.registration(data)
-    return redirect('/questions')
+        id = User.registration(data)
+        if id:
+            session['id'] = id
+            return redirect('/questions')
+        else:
+            flash("Something Went Wrong", 'registration')
+            return redirect('/')
 
 @app.route('/questions')
 def questions():
     if not 'id' in session:
         return redirect('/')
     elif session['id'] > 0:
+        id = {'id': session['id']}
         data = {
-            'user': User.select(data={'id': session['id']}),
+            'user': User.select(id),
             'users': User.select(),
             'unanswered_questions': Question.unanswered_questions(),
             'answered_questions': Answer.answered_questions()
