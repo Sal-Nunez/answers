@@ -29,9 +29,10 @@ def create_question():
 @app.route('/questions/<int:id>')
 def display_question(id):
     user_id = {'id': session['id']}
+    question_id = {'id': id}
     data = {
         'user': User.select(user_id),
-        'question': Question.select({'id': id}),
+        'question': Question.select(question_id),
         'answers': Answer.answers_with_votes()
     }
     return render_template('question.html', **data)
